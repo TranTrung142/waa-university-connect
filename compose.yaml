@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: "mysql"
+    #    hostname: "mysql"
+    image: 'mysql:8'
+    networks:
+      - mynetwork
+    expose:
+      - 3306
+    volumes:
+      - './mysql-university:/var/lib/mysql'
+    environment:
+      MYSQL_ROOT_PASSWORD: 1
+      MYSQL_DATABASE: university_connect
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1
+    ports:
+      - '33068:3306/tcp'
+
+  app-university:
+    container_name: "app-university"
+    hostname: "app-university"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'app-university'
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysql:3306/university_connect?allowPublicKeyRetrieval=true
+      - spring.datasource.username=root
+      - spring.datasource.password=1
+    networks:
+      - mynetwork
+    expose:
+      - 8080
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+    stdin_open: true
+    tty: true
+
+networks:
+  mynetwork:
+    name: mynetwork
+    driver: bridge
+
+
