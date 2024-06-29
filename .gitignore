@@ -35,6 +35,8 @@ build/
 /target
 .idea
 .DS_Store
-#/src/main/resources/application.properties
+/src/main/resources/application.properties
 /mysql-estate
+
+
 
