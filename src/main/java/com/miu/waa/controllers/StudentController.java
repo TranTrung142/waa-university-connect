@@ -1,5 +1,9 @@
 package com.miu.waa.controllers;
 
+import com.miu.waa.dto.ErrorResponse;
+import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.request.StudentCreateDto;
+import com.miu.waa.dto.response.StudentResponseDto;
 import com.miu.waa.entities.Student;
 import com.miu.waa.entities.User;
 import com.miu.waa.services.StudentService;
@@ -16,17 +20,40 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllUsers() {
+    public ResponseEntity<List<StudentResponseDto>> getAllUsers() {
         return ResponseEntity.ok(studentService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.findById(id));
+    public ResponseEntity<StudentResponseDto> getUserById(@PathVariable Long id) {
+        try{
+            StudentResponseDto studentResponseDto=studentService.findById(id);
+            return ResponseEntity.ok(studentResponseDto);
+        }
+        catch (Exception e){
+            throw e;
+        }
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody Student studentDto) {
-        return ResponseEntity.ok(studentService.save(studentDto));
+    public ResponseEntity<?> createStudent(@RequestBody StudentCreateDto studentDto) {
+        try {
+            StudentResponseDto studentResponseDto = studentService.createStudent(studentDto);
+            return ResponseEntity.ok(new SuccessResponse(studentResponseDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, "Internal server error", null));
+        }
+    }
+
+    @PutMapping("/{studentId}")
+    public ResponseEntity<?> updateStudent(@PathVariable Long studentId,@RequestBody StudentCreateDto studentDto) {
+        try {
+            StudentResponseDto studentResponseDto = studentService.updateStudent(studentId,studentDto);
+            return ResponseEntity.ok(new SuccessResponse(studentResponseDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, "Internal server error", null));
+        }
     }
 }
