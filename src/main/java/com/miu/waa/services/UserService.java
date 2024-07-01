@@ -14,4 +14,6 @@ public interface UserService {
     Optional<User> createUser(User u);
     Optional<User> updateUser(Long id, User user);
     void deleteUser(Long id);
+    public void updateFailedLoginAttempts(User user);
+    public void resetFailedLoginAttempts(User user);
 }
