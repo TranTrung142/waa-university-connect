@@ -14,9 +14,14 @@ spring.servlet.multipart.max-file-size=3MB
 spring.jpa.show-sql=true
 spring.data.jpa.repositories.enabled=true
 spring.jpa.generate-ddl=true
-spring.jpa.hibernate.ddl-auto=none
+spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 spring.jpa.properties.hibernate.hbm2ddl.import_files=data.sql
+
+# jwt
+application.security.jwt.secret-key=8d4fed75477d160c393db8a22edce23a5ae7971b4533077d89ac0016dd92c879d21791073310294924cb896443a8214cfdc129baa42af8b3030a397382a93532
+application.security.jwt.expiration=86400
+application.security.jwt.refresh-token.expiration=864000
 
 #Security
 spring.security.user.name=admin
