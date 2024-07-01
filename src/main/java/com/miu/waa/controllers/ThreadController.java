@@ -21,7 +21,7 @@ public class ThreadController {
             return ResponseEntity.ok(new SuccessResponse(threadService.findAll()));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
+                    .body(new ErrorResponse(500, "Internal server error", e.getMessage()));
         }
     }
 
@@ -33,7 +33,7 @@ public class ThreadController {
                 return ResponseEntity.status(404)
                         .body(new ErrorResponse(404, "Thread not found", null));
             }
-            return ResponseEntity.ok(new SuccessResponse(threadService.getThreadById(id)));
+            return ResponseEntity.ok(new SuccessResponse(thread));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, "Internal server error", null));
@@ -51,7 +51,7 @@ public class ThreadController {
             return ResponseEntity.ok(new SuccessResponse(thread));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
+                    .body(new ErrorResponse(500, "Internal server error", e.getMessage()));
         }
     }
 
@@ -66,7 +66,7 @@ public class ThreadController {
             return ResponseEntity.ok(new SuccessResponse(thread));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
+                    .body(new ErrorResponse(500, "Internal server error", e.getMessage()));
         }
     }
 
@@ -77,7 +77,7 @@ public class ThreadController {
             return ResponseEntity.ok(new SuccessResponse("Thread deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
+                    .body(new ErrorResponse(500, "Internal server error", e.getMessage()));
         }
     }
 }

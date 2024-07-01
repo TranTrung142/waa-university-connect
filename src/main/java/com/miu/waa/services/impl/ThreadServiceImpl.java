@@ -3,8 +3,11 @@ package com.miu.waa.services.impl;
 import com.miu.waa.dto.request.ThreadCreateDto;
 import com.miu.waa.dto.response.ThreadResponseDto;
 import com.miu.waa.entities.DiscussionCategory;
+import com.miu.waa.entities.User;
 import com.miu.waa.mapper.ThreadDtoMapper;
+import com.miu.waa.repositories.DiscussionCategoryRepository;
 import com.miu.waa.repositories.ThreadRepository;
+import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.ThreadService;
 import com.miu.waa.entities.Thread;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ThreadServiceImpl implements ThreadService {
-    private ThreadRepository threadRepository;
+    private final ThreadRepository threadRepository;
+    private final UserRepository userRepository;
+    private final DiscussionCategoryRepository discussionCategoryRepository;
 
     @Override
     public ThreadResponseDto getThreadById(Long id) {
@@ -40,7 +45,14 @@ public class ThreadServiceImpl implements ThreadService {
     @Override
     public ThreadResponseDto createThread(ThreadCreateDto threadCreateDto) {
         Thread thread = ThreadDtoMapper.dtoMapper.threadCreateDtoToThread(threadCreateDto);
-        thread.setCategory(ThreadDtoMapper.dtoMapper.map(threadCreateDto.getCategoryId(), DiscussionCategory.class));
+        DiscussionCategory category = discussionCategoryRepository.findById(threadCreateDto.getCategoryId())
+                .orElseThrow(() -> new NoSuchElementException("DiscussionCategory not found"));
+        thread.setCategory(category);
+
+        User user = userRepository.findById(threadCreateDto.getCreatedById())
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        thread.setCreatedBy(user);
+
         thread = threadRepository.save(thread);
         return ThreadDtoMapper.dtoMapper.threadToThreadResponseDto(thread);
     }
@@ -51,7 +63,10 @@ public class ThreadServiceImpl implements ThreadService {
         if (thread.isPresent()) {
             Thread threadToUpdate = thread.get();
             threadToUpdate.setTitle(threadDTO.getTitle());
-            threadToUpdate.setCategory(ThreadDtoMapper.dtoMapper.map(threadDTO.getCategoryId(), DiscussionCategory.class));
+            DiscussionCategory category = discussionCategoryRepository.findById(threadDTO.getCategoryId())
+                    .orElseThrow(() -> new NoSuchElementException("DiscussionCategory not found"));
+
+            threadToUpdate.setCategory(category);
             threadToUpdate = threadRepository.save(threadToUpdate);
             return ThreadDtoMapper.dtoMapper.threadToThreadResponseDto(threadToUpdate);
         }

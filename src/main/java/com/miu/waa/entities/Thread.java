@@ -15,12 +15,12 @@ public class Thread {
     private Long id;
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
     private DiscussionCategory category;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @CreationTimestamp

@@ -10,9 +10,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ThreadDtoMapper {
     ThreadDtoMapper dtoMapper = Mappers.getMapper(ThreadDtoMapper.class);
-
     ThreadResponseDto threadToThreadResponseDto(Thread thread);
     Thread threadCreateDtoToThread(ThreadCreateDto thread);
-
-    DiscussionCategory map(Long categoryId, Class<DiscussionCategory> discussionCategoryClass);
 }
