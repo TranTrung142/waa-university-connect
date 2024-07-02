@@ -1,0 +1,47 @@
+//from ThreadController
+GET http://localhost:8080/api/v1/threads
+
+###
+POST http://localhost:8080/api/v1/threads
+Content-Type: application/json
+
+{
+    "title": "Thread 3",
+    "categoryId": 1,
+    "createdById": 1
+}
+
+###
+GET http://localhost:8080/api/v1/threads/1
+
+###
+PUT http://localhost:8080/api/v1/threads/1
+Content-Type: application/json
+
+{
+    "title": "Thread 2",
+    "categoryId": 1,
+    "createdById": 1
+}
+
+###
+DELETE http://localhost:8080/api/v1/posts/thread/1
+
+//from PostController
+###
+GET http://localhost:8080/api/v1/posts/1
+
+###
+GET http://localhost:8080/api/v1/posts/thread/1
+###
+POST http://localhost:8080/api/v1/posts
+Content-Type: application/json
+
+{
+    "content": "Post 2",
+    "threadId": 1,
+    "createdById": 1,
+    "parentPostId": 1
+}
+
+
