@@ -42,7 +42,6 @@ public class JwtServiceImpl implements JwtService {
             Map<String, Object> claims = Map.of("user", user);
             user.setCreatedAt(null);
             user.setUpdatedAt(null);
-            System.out.println("date: " + (new Date(System.currentTimeMillis())));
             LocalDateTime issuedAt = LocalDateTime.now();
             LocalDateTime expiration = issuedAt.plusSeconds(jwtExpiration);
             String token = Jwts.builder()
