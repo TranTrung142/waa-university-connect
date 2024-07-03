@@ -45,3 +45,14 @@ Content-Type: application/json
 }
 
 
+###
+# @no-cookie-jar
+PUT http://localhost:8089/api/v1/students/10001/uploadImages
+
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="image1.jpg"
+Content-Type: image/jpeg
+
+----WebKitFormBoundary7MA4YWxkTrZu0gW
