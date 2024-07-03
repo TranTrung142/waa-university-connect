@@ -1,6 +1,7 @@
 package com.miu.waa.services.impl;
 
 import com.miu.waa.entities.User;
+import com.miu.waa.entities.UserStatus;
 import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,13 @@ public class UserServiceImpl implements UserService {
     public Optional<User> updateUser(Long id, User user) {
         return userRepository.findById(id).map( foundUser -> {
             user.setId(id);
+            return userRepository.save(user);
+        });
+    }
+
+    public Optional<User> updateStatusUser(Long id, UserStatus status) {
+        return userRepository.findById(id).map( user -> {
+            user.setStatus(status);
             return userRepository.save(user);
         });
     }
