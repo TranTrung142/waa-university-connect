@@ -4,8 +4,11 @@ import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.dto.request.PostCreateDto;
 import com.miu.waa.dto.response.PostResponseDto;
+import com.miu.waa.entities.Post;
 import com.miu.waa.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +82,36 @@ public class PostController {
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, "Internal server error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Search query can be a combination of the following:
+     * Equality: represented by colon (:)
+     * Negation: represented by Exclamation mark (!)
+     * Greater than: represented by (>)
+     * Less than: represented by (<)
+     * Like: represented by tilde (~)
+     * Starts with: represented by (:prefix*)
+     * Ends with: represented by (:*suffix)
+     * Contains: represented by (:*substring*)
+     *
+     * @param search
+     * @return
+     * http://localhost:8080/api/v1/posts/search?page=1&size=3&search=content:Post*
+     */
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPost(@RequestParam("page") int page,
+                                        @RequestParam("size") int size,
+                                        @RequestParam("search") String search) {
+        try {
+            Page<Post> result = postService.search(page, size, true, search);
+            if (page > result.getTotalPages()) {
+                return new ResponseEntity<>("Page not found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(result.getContent(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
