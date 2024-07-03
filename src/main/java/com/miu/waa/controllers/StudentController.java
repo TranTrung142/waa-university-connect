@@ -6,6 +6,7 @@ import com.miu.waa.services.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,5 +29,10 @@ public class StudentController {
     @PostMapping
     public ResponseEntity<Student> createStudent(@RequestBody Student studentDto) {
         return ResponseEntity.ok(studentService.save(studentDto));
+    }
+
+    @PostMapping("/{id}/uploadImages")
+    public ResponseEntity<Student> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.ok(studentService.uploadProfileImage(id, image));
     }
 }
