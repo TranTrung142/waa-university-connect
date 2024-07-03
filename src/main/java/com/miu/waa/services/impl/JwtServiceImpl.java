@@ -70,12 +70,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public String extractUsername(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Invalid token");
+        }
+
     }
 
     private String buildToken(
