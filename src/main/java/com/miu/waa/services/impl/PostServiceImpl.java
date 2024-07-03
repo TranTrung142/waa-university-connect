@@ -93,7 +93,7 @@ public class PostServiceImpl implements PostService {
             builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
         }
         // Add custom condition to check deletedAt is not null
-        builder.withDeletedAtIsNull();
+        //builder.withDeletedAtIsNull();
 
 //        // Add custom condition to check deletedAt is not null
 //        builder.with(null, "deletedAt", "n", null, "", "");

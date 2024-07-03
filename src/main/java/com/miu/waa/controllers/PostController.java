@@ -98,11 +98,12 @@ public class PostController {
      *
      * @param search
      * @return
+     * http://localhost:8080/api/v1/posts/search?page=1&size=3&search=content:Post*
      */
     @GetMapping("/search")
-    public ResponseEntity<?> getAllProperties(@RequestParam("page") int page,
-                                              @RequestParam("size") int size,
-                                              @RequestParam("search") String search) {
+    public ResponseEntity<?> searchPost(@RequestParam("page") int page,
+                                        @RequestParam("size") int size,
+                                        @RequestParam("search") String search) {
         try {
             Page<Post> result = postService.search(page, size, true, search);
             if (page > result.getTotalPages()) {
