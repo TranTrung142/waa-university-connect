@@ -7,13 +7,20 @@ import com.miu.waa.mapper.PostDtoMapper;
 import com.miu.waa.repositories.PostRepository;
 import com.miu.waa.repositories.ThreadRepository;
 import com.miu.waa.repositories.UserRepository;
+import com.miu.waa.search_spec.PostSpecificationsBuilder;
+import com.miu.waa.search_spec.SearchOperation;
 import com.miu.waa.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,5 +73,32 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Post> search(int page, int size, boolean save, String search) {
+        // Insert the search history into the database
+//        SearchHistory searchHistory = new SearchHistory();
+//        searchHistory.setSearchCriteria(search);
+//        searchHistory.setUser(userRepository.findById(1L).get());
+//        searchHistory.setCreatedAt(LocalDateTime.now());
+//        searchHistory.setUpdatedAt(LocalDateTime.now());
+//        searchHistoryRepository.save(searchHistory);
+
+        PostSpecificationsBuilder builder = new PostSpecificationsBuilder();
+        String operationSetExper = String.join("|", SearchOperation.SIMPLE_OPERATION_SET);
+        Pattern pattern = Pattern.compile("(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
+        Matcher matcher = pattern.matcher(search + ",");
+        while (matcher.find()) {
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
+        }
+        // Add custom condition to check deletedAt is not null
+        //builder.withDeletedAtIsNull();
+
+//        // Add custom condition to check deletedAt is not null
+//        builder.with(null, "deletedAt", "n", null, "", "");
+
+        Specification<Post> spec = builder.build();
+        return postRepository.findAll(spec, PageRequest.of(page, size));
     }
 }

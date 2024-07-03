@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/health/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole(UserRole.ADMIN.name())
+                        .requestMatchers("/api/v1/admin/**").hasAnyRole(UserRole.ADMIN.name())
                         .requestMatchers("/api/v1/students/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.STUDENT.name())
                         .requestMatchers("/api/v1/resources/**").permitAll()
                         .anyRequest().authenticated()
