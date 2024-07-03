@@ -2,6 +2,7 @@ package com.miu.waa.controllers;
 
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.User;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;

@@ -1,15 +1,25 @@
 package com.miu.waa.services.impl;
 
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
+import com.miu.waa.entities.Event;
+import com.miu.waa.entities.EventAttendance;
+import com.miu.waa.entities.EventStatus;
 import com.miu.waa.entities.User;
+import com.miu.waa.mapper.EventDtoMapper;
+import com.miu.waa.repositories.EventAttendanceRepository;
+import com.miu.waa.repositories.EventRepository;
 import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.UserService;
+import com.miu.waa.utils.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

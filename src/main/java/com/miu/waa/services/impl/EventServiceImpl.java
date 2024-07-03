@@ -9,6 +9,7 @@ import com.miu.waa.mapper.EventDtoMapper;
 import com.miu.waa.repositories.EventRepository;
 import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.EventService;
+import com.miu.waa.utils.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,10 @@ public class EventServiceImpl implements EventService {
         this.userRepository = userRepository;
     }
 
+//    private Optional<Event> getEventById(Long eventId) {
+//        Optional<User> userLogin = RequestUtil.getUserLogin(request);
+//    }
+
     @Override
     public List<EventResponseDto> findAll() {
         return eventRepository.findAll().stream()
@@ -52,13 +57,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventResponseDto save(EventCreateDto eventCreateDto) {
+    public EventResponseDto save(Event event) {
         try{
-            Event event=EventDtoMapper.dtoMapper.eventCreateDtoToEvent(eventCreateDto);
             event.setStatus(EventStatus.DRAFT);
             event.setCreatedOn(LocalDateTime.now());
-//            event.setOrganizer(userRepository.findById(currentUserId).get());
-            event.setOrganizer(null);
             event = eventRepository.save(event);
             return EventDtoMapper.dtoMapper.eventToEventResponseDto(event);
         }
@@ -100,6 +102,7 @@ public class EventServiceImpl implements EventService {
 
             if(eventStatus==EventStatus.DRAFT ||
                 (eventStatus==EventStatus.PUBLISHED && event.getStatus()!=EventStatus.DRAFT) ||
+                (eventStatus==EventStatus.CLOSED && event.getStatus()!=EventStatus.STARTED) ||
                 (eventStatus!=EventStatus.PUBLISHED && event.getStatus()!=EventStatus.PUBLISHED)
             ){
                 throw new Exception("Event status can not be updated!!!");

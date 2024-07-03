@@ -4,13 +4,19 @@ import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.dto.request.EventCreateDto;
 import com.miu.waa.dto.response.EventResponseDto;
+import com.miu.waa.entities.Event;
 import com.miu.waa.entities.EventStatus;
 import com.miu.waa.entities.Student;
 import com.miu.waa.entities.User;
+import com.miu.waa.mapper.EventDtoMapper;
 import com.miu.waa.services.EventService;
+import com.miu.waa.utils.RequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -29,7 +35,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getEventById(@PathVariable Long id) {
         try {
             EventResponseDto eventResponseDto = eventService.findById(id);
             if (eventResponseDto == null) {
@@ -44,9 +50,12 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createEvent(@RequestBody EventCreateDto eventCreateDto) {
+    public ResponseEntity<?> createEvent(@RequestBody EventCreateDto eventCreateDto,HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(new SuccessResponse(eventService.save(eventCreateDto)));
+            Event event= EventDtoMapper.dtoMapper.eventCreateDtoToEvent(eventCreateDto);
+            Optional<User> userLogin = RequestUtil.getUserLogin(request);
+            userLogin.ifPresent(user -> event.setOrganizer(user));
+            return ResponseEntity.ok(new SuccessResponse(eventService.save(event)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, e.getMessage(), null));
@@ -54,8 +63,10 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody EventCreateDto eventCreateDto) {
+    public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody EventCreateDto eventCreateDto, HttpServletRequest request) {
         try {
+            Optional<User> userLogin = RequestUtil.getUserLogin(request);
+
             return ResponseEntity.ok(new SuccessResponse(eventService.update(id,eventCreateDto)));
         } catch (Exception e) {
             return ResponseEntity.status(500)

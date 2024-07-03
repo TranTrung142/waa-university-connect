@@ -11,9 +11,9 @@ import java.util.List;
 public interface EventService {
     List<EventResponseDto> findAll();
     EventResponseDto findById(Long id);
-    EventResponseDto save(EventCreateDto event);
+    EventResponseDto  save(Event event);
     EventResponseDto update(Long id,EventCreateDto event) throws Exception;
     EventResponseDto updateStatus(Long eventId, EventStatus eventStatus) throws Exception;
-//    EventResponseDto publish(Long eventId);
     EventResponseDto delete(Long eventId) throws Exception;
+
 }

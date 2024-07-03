@@ -1,5 +1,7 @@
 package com.miu.waa.services;
 
+import com.miu.waa.dto.response.EventResponseDto;
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Student;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,4 +13,6 @@ public interface StudentService {
     Student save(Student student);
     Student update(Student student);
     Student uploadProfileImage(Long id, MultipartFile image);
+    List<UpcomingEventResponseDto> findAllUpcomingPublishedEvent();
+    void joinEvent(Long eventId);
 }
