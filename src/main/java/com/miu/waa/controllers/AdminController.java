@@ -2,21 +2,22 @@ package com.miu.waa.controllers;
 
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.request.EventFilterDto;
+import com.miu.waa.entities.EventStatus;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
+import com.miu.waa.services.EventService;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
+    private final EventService eventService;
 
     @GetMapping("/students")
     public ResponseEntity<?> getAllStudents() {
@@ -57,5 +58,28 @@ public class AdminController {
                     .body(new ErrorResponse(500, "Internal server error", null));
         }
     }
-
+    @GetMapping("/events")
+    public ResponseEntity<?> getAllEvent(@RequestParam(required = false) EventFilterDto filterDto) {
+        try {
+            if (filterDto == null) {
+                filterDto = new EventFilterDto();
+                filterDto.setStatus(null); // or set a default value
+                filterDto.setDate(null);   // or set a default value
+            }
+            return ResponseEntity.ok(new SuccessResponse(eventService.findAll(filterDto)));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
+    @PutMapping("/events/{id}/approve")
+    public ResponseEntity<?> approveEvent(@PathVariable Long id) {
+        try {
+            eventService.publishEvent(id);
+            return ResponseEntity.ok(new SuccessResponse("Event approved successfully!!!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
 }

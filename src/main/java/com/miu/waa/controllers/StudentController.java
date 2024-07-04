@@ -2,6 +2,7 @@ package com.miu.waa.controllers;
 
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Student;
@@ -40,20 +41,18 @@ public class StudentController {
         return ResponseEntity.ok(studentService.uploadProfileImage(id, image));
     }
 
-    @GetMapping("/upcoming-events")
-    public ResponseEntity<?> getAllUpcomingEvents() {
-        List<UpcomingEventResponseDto> result=studentService.findAllUpcomingPublishedEvent();
-        return ResponseEntity.ok(result);
-    }
-    @PostMapping("/join-event/{eventId}")
-    public ResponseEntity<?> joinEvent(@PathVariable Long eventId) {
+    @GetMapping("/{userId}/events")
+    public ResponseEntity<?> getStudentEvent(@PathVariable Long userId,@RequestParam(required = false) EventFilterDto filterDto) {
         try {
-            studentService.joinEvent(eventId);
-            return ResponseEntity.ok(new SuccessResponse("Joined successfully"));
+            if (filterDto == null) {
+                filterDto = new EventFilterDto();
+                filterDto.setStatus(null); // or set a default value
+                filterDto.setDate(null);   // or set a default value
+            }
+            return ResponseEntity.ok(new SuccessResponse(studentService.findAllStudentEvents(userId,filterDto)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, e.getMessage(), null));
         }
     }
-
 }

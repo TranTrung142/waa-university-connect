@@ -1,9 +1,10 @@
 package com.miu.waa.mapper;
 
 import com.miu.waa.dto.request.EventCreateDto;
-import com.miu.waa.dto.response.EventResponseDto;
-import com.miu.waa.dto.response.UpcomingEventResponseDto;
+import com.miu.waa.dto.response.*;
 import com.miu.waa.entities.Event;
+import com.miu.waa.entities.EventAttendance;
+import com.miu.waa.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -14,8 +15,10 @@ public interface EventDtoMapper {
     EventDtoMapper dtoMapper =
             Mappers.getMapper(EventDtoMapper.class);
 
-    @Mapping(target = "organizer", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     Event eventCreateDtoToEvent(EventCreateDto eventCreateDto);
     EventResponseDto eventToEventResponseDto(Event event);
     UpcomingEventResponseDto eventToUpcomingEventResponseDto(Event event);
+    EventAttandenceResponseDto eventAttandenceToResponseDto(EventAttendance eventAttendance);
+    EventAttendedUserDto userToEventAttendedUserDto(User user);
 }

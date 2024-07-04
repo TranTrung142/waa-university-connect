@@ -1,5 +1,6 @@
 package com.miu.waa.services;
 
+import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Student;
@@ -13,6 +14,5 @@ public interface StudentService {
     Student save(Student student);
     Student update(Student student);
     Student uploadProfileImage(Long id, MultipartFile image);
-    List<UpcomingEventResponseDto> findAllUpcomingPublishedEvent();
-    void joinEvent(Long eventId);
+    List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto);
 }

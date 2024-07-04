@@ -22,11 +22,15 @@ public class Event {
     private LocalDateTime eventDateTime;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User organizer;
+    @JoinColumn
+    private User createdBy;
+    private LocalDateTime createdOn;
 
     @Enumerated(EnumType.STRING)
     private EventStatus status;
-    private LocalDateTime createdOn;
-    private LocalDateTime publishedOn;
+
+    @ManyToOne
+    @JoinColumn
+    private User approvedBy;
+    private LocalDateTime approvedOn;
 }

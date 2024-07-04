@@ -4,6 +4,7 @@ import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.dto.request.EventCreateDto;
 import com.miu.waa.dto.response.EventResponseDto;
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Event;
 import com.miu.waa.entities.EventStatus;
 import com.miu.waa.entities.Student;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -24,15 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
-    @GetMapping
-    public ResponseEntity<?> getAllEvent() {
-        try {
-            return ResponseEntity.ok(new SuccessResponse(eventService.findAll()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, e.getMessage(), null));
-        }
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getEventById(@PathVariable Long id) {
@@ -54,7 +48,7 @@ public class EventController {
         try {
             Event event= EventDtoMapper.dtoMapper.eventCreateDtoToEvent(eventCreateDto);
             Optional<User> userLogin = RequestUtil.getUserLogin(request);
-            userLogin.ifPresent(user -> event.setOrganizer(user));
+            userLogin.ifPresent(user -> event.setCreatedBy(user));
             return ResponseEntity.ok(new SuccessResponse(eventService.save(event)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
@@ -65,8 +59,6 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody EventCreateDto eventCreateDto, HttpServletRequest request) {
         try {
-            Optional<User> userLogin = RequestUtil.getUserLogin(request);
-
             return ResponseEntity.ok(new SuccessResponse(eventService.update(id,eventCreateDto)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
@@ -83,21 +75,37 @@ public class EventController {
                     .body(new ErrorResponse(500, e.getMessage(), null));
         }
     }
-    @PutMapping("/publish/{id}")
-    public ResponseEntity<?> publishEvent(@PathVariable Long id) {
-        try {
-            eventService.updateStatus(id, EventStatus.PUBLISHED);
-            return ResponseEntity.ok(new SuccessResponse("Event published successfully!!!"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, e.getMessage(), null));
-        }
-    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<?> changeStatus(@PathVariable Long id,@RequestParam  EventStatus status) {
         try {
             eventService.updateStatus(id, status);
             return ResponseEntity.ok(new SuccessResponse("Status updated successfully!!!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
+    @GetMapping("/upcoming-events")
+    public ResponseEntity<?> getAllUpcomingEvents() {
+        List<UpcomingEventResponseDto> result=eventService.findAllUpcomingPublishedEvent();
+        return ResponseEntity.ok(result);
+    }
+    @PostMapping("/{eventId}/join-event")
+    public ResponseEntity<?> joinEvent(@PathVariable Long eventId) {
+        try {
+            eventService.joinEvent(eventId);
+            return ResponseEntity.ok(new SuccessResponse("Joined successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/{eventId}/attendance")
+    public ResponseEntity<?> getAttandence(@PathVariable Long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.findEventAttendance(eventId));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, e.getMessage(), null));

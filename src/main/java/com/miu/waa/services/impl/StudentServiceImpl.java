@@ -1,5 +1,6 @@
 package com.miu.waa.services.impl;
 
+import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.*;
@@ -24,9 +25,8 @@ import java.util.stream.Collectors;
 @Service
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
-    private final FileStorageService fileStorageService;
     private final EventRepository eventRepository;
-    private final EventAttendanceRepository eventAttendanceRepository;
+    private final FileStorageService fileStorageService;
 
     @Override
     public List<Student> findAll() {
@@ -61,35 +61,12 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
     @Override
-    public List<UpcomingEventResponseDto> findAllUpcomingPublishedEvent() {
-        List<Event> publishedEvent=eventRepository.findAllUpcomingPublishedEvent();
-        return publishedEvent.stream()
-                .map(EventDtoMapper.dtoMapper::eventToUpcomingEventResponseDto)
+    public List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto) {
+        User user = RequestUtil.getUserLogin(null)
+                .orElseThrow(() -> new NoSuchElementException("User not logged in. Please log in to continue."));
+
+        return eventRepository.findAllStudentEvents(user.getId(),dto).stream()
+                .map(EventDtoMapper.dtoMapper::eventToEventResponseDto)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public void joinEvent(Long eventId) {
-        Event event=eventRepository.findById(eventId)
-                .orElseThrow(()->new NoSuchElementException("Event not found!!!"));
-
-        StringBuilder sb=new StringBuilder();
-        if(event.getStatus()!= EventStatus.STARTED){
-            sb.append("Event has not started by host");
-        }
-        else if(event.getEventDateTime().isAfter(LocalDateTime.now())){
-            sb.append("you cannot join this event");
-        }
-        if(!sb.isEmpty())
-            throw new NoSuchElementException(sb.toString());
-
-        User user= RequestUtil.getUserLogin(null)
-                .orElseThrow(()->new NoSuchElementException("User not loggedIn!!!"));
-
-        EventAttendance attendance=new EventAttendance();
-        attendance.setUser(user);
-        attendance.setEvent(event);
-        attendance.setCheckInTime(LocalDateTime.now());
-        eventAttendanceRepository.save(attendance);
     }
 }
