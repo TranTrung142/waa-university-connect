@@ -39,28 +39,6 @@ public class StudentController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> createStudent(@RequestBody StudentCreateDto studentDto) {
-        try {
-            StudentResponseDto studentResponseDto = studentService.createStudent(studentDto);
-            return ResponseEntity.ok(new SuccessResponse(studentResponseDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
-        }
-    }
-
-    @PutMapping("/{studentId}")
-    public ResponseEntity<?> updateStudent(@PathVariable Long studentId,@RequestBody StudentCreateDto studentDto) {
-        try {
-            StudentResponseDto studentResponseDto = studentService.updateStudent(studentId,studentDto);
-            return ResponseEntity.ok(new SuccessResponse(studentResponseDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(new ErrorResponse(500, "Internal server error", null));
-        }
-    }
-
     @PostMapping("/{id}/uploadImages")
     public ResponseEntity<Student> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
         return ResponseEntity.ok(studentService.uploadProfileImage(id, image));

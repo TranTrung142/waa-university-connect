@@ -29,7 +29,6 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String phone;
-    private LocalDate dateOfBirth;
     private String profilePictureURL;
 
     @Enumerated(EnumType.STRING)

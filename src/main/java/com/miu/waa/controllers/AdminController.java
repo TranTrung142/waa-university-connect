@@ -29,7 +29,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/student/approve/{id}")
+    @PutMapping("/student/approve/{id}")
     public ResponseEntity<?> approveStudent(@PathVariable Long id) {
         try {
             User user = userService.updateStatusUser(id, UserStatus.ACTIVATED).orElse(null);
@@ -44,7 +44,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/student/deactivate/{id}")
+    @PutMapping("/student/deactivate/{id}")
     public ResponseEntity<?> deactivateStudent(@PathVariable Long id) {
         try {
             User user = userService.updateStatusUser(id, UserStatus.DEACTIVATE).orElse(null);
