@@ -13,6 +13,7 @@ import java.util.List;
 public interface StudentService {
     List<StudentResponseDto> findAll();
     StudentResponseDto findById(Long id);
+    StudentResponseDto findByStudentId(Long studentId);
     StudentResponseDto createStudent(StudentCreateDto student);
     StudentResponseDto updateStudent(Long studentId,StudentCreateDto studetDto);
     Student uploadProfileImage(Long id, MultipartFile image);

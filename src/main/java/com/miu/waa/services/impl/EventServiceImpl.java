@@ -54,6 +54,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponseDto save(Event event) {
         try{
+            if(event.getEventDateTime().isBefore( LocalDateTime.now())){
+                throw new NoSuchElementException("Event date can not be less than current date");
+            }
             User user = RequestUtil.getUserLogin(null)
                     .orElseThrow(() -> new NoSuchElementException("User not logged in. Please log in to continue."));
 
