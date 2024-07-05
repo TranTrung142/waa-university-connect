@@ -1,11 +1,14 @@
 package com.miu.waa.services.impl;
 
 import com.miu.waa.entities.User;
+import com.miu.waa.entities.UserStatus;
 import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -27,6 +31,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public Optional<User> createUser(User u) {
+        String encodedPassword = passwordEncoder.encode(u.getPassword());
+        u.setPassword(encodedPassword);
         return Optional.ofNullable(userRepository.save(u));
     }
 
@@ -37,7 +43,29 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    public Optional<User> updateStatusUser(Long id, UserStatus status) {
+        return userRepository.findById(id).map( user -> {
+            user.setStatus(status);
+            return userRepository.save(user);
+        });
+    }
+
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+
+    public void updateFailedLoginAttempts(User user) {
+        user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
+        if (user.getFailedLoginAttempts() >= 5) {
+            user.setLockTime(LocalDateTime.now().plusSeconds(30));
+        }
+        userRepository.save(user);
+    }
+
+    public void resetFailedLoginAttempts(User user) {
+        user.setFailedLoginAttempts(0);
+        user.setLockTime(null);
+        userRepository.save(user);
     }
 }

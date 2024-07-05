@@ -5,9 +5,12 @@ import com.miu.waa.dto.response.StudentResponseDto;
 import com.miu.waa.entities.Student;
 import com.miu.waa.mapper.StudentDtoMapper;
 import com.miu.waa.repositories.StudentRepository;
+import com.miu.waa.services.FileStorageService;
 import com.miu.waa.services.StudentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
-
+    private final FileStorageService fileStorageService;
+  
     @Override
     public List<StudentResponseDto> findAll() {
         try{
@@ -86,5 +90,13 @@ public class StudentServiceImpl implements StudentService {
         catch (Exception e){
             throw e;
         }
+    }
+
+    public Student uploadProfileImage(Long id, MultipartFile image) {
+        Student student = findById(id);
+        String savedImages = fileStorageService.storeFile(image);
+        student.setProfilePictureURL(savedImages);
+        studentRepository.save(student);
+        return student;
     }
 }

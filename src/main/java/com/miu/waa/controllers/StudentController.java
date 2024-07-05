@@ -10,6 +10,7 @@ import com.miu.waa.services.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -55,5 +56,10 @@ public class StudentController {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, "Internal server error", null));
         }
+    }
+
+    @PostMapping("/{id}/uploadImages")
+    public ResponseEntity<Student> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.ok(studentService.uploadProfileImage(id, image));
     }
 }
