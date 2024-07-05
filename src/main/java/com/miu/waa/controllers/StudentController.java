@@ -41,15 +41,15 @@ public class StudentController {
         return ResponseEntity.ok(studentService.uploadProfileImage(id, image));
     }
 
-    @GetMapping("/{userId}/events")
-    public ResponseEntity<?> getStudentEvent(@PathVariable Long userId,@RequestParam(required = false) EventFilterDto filterDto) {
+    @GetMapping("/{studentId}/events")
+    public ResponseEntity<?> getStudentEvent(@PathVariable Long studentId,@RequestParam(required = false) EventFilterDto filterDto) {
         try {
             if (filterDto == null) {
                 filterDto = new EventFilterDto();
-                filterDto.setStatus(null); // or set a default value
-                filterDto.setDate(null);   // or set a default value
+                filterDto.setStatus(null);
+                filterDto.setDate(null);
             }
-            return ResponseEntity.ok(new SuccessResponse(studentService.findAllStudentEvents(userId,filterDto)));
+            return ResponseEntity.ok(new SuccessResponse(studentService.findAllStudentEvents(studentId,filterDto)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, e.getMessage(), null));

@@ -62,10 +62,10 @@ public class StudentServiceImpl implements StudentService {
     }
     @Override
     public List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto) {
-        User user = RequestUtil.getUserLogin(null)
-                .orElseThrow(() -> new NoSuchElementException("User not logged in. Please log in to continue."));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new NoSuchElementException("Student not found!!"));
 
-        return eventRepository.findAllStudentEvents(user.getId(),dto).stream()
+        return eventRepository.findAllStudentEvents(student.getId(),dto).stream()
                 .map(EventDtoMapper.dtoMapper::eventToEventResponseDto)
                 .collect(Collectors.toList());
     }
