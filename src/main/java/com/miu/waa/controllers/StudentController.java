@@ -2,6 +2,9 @@ package com.miu.waa.controllers;
 
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.request.EventFilterDto;
+import com.miu.waa.dto.response.EventResponseDto;
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.dto.request.StudentCreateDto;
 import com.miu.waa.dto.response.StudentResponseDto;
 import com.miu.waa.entities.Student;
@@ -61,5 +64,20 @@ public class StudentController {
     @PostMapping("/{id}/uploadImages")
     public ResponseEntity<Student> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
         return ResponseEntity.ok(studentService.uploadProfileImage(id, image));
+    }
+
+    @GetMapping("/{studentId}/events")
+    public ResponseEntity<?> getStudentEvent(@PathVariable Long studentId,@RequestParam(required = false) EventFilterDto filterDto) {
+        try {
+            if (filterDto == null) {
+                filterDto = new EventFilterDto();
+                filterDto.setStatus(null);
+                filterDto.setDate(null);
+            }
+            return ResponseEntity.ok(new SuccessResponse(studentService.findAllStudentEvents(studentId,filterDto)));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
     }
 }

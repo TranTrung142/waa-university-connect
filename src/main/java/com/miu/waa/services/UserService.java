@@ -1,5 +1,6 @@
 package com.miu.waa.services;
 
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
 import org.springframework.stereotype.Service;

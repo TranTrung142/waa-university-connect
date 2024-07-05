@@ -1,5 +1,12 @@
 package com.miu.waa.services.impl;
 
+import com.miu.waa.dto.request.EventFilterDto;
+import com.miu.waa.dto.response.EventResponseDto;
+import com.miu.waa.dto.response.UpcomingEventResponseDto;
+import com.miu.waa.entities.*;
+import com.miu.waa.mapper.EventDtoMapper;
+import com.miu.waa.repositories.EventAttendanceRepository;
+import com.miu.waa.repositories.EventRepository;
 import com.miu.waa.dto.request.StudentCreateDto;
 import com.miu.waa.dto.response.StudentResponseDto;
 import com.miu.waa.entities.Student;
@@ -7,6 +14,7 @@ import com.miu.waa.mapper.StudentDtoMapper;
 import com.miu.waa.repositories.StudentRepository;
 import com.miu.waa.services.FileStorageService;
 import com.miu.waa.services.StudentService;
+import com.miu.waa.utils.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
+    private final EventRepository eventRepository;
     private final FileStorageService fileStorageService;
   
     @Override
@@ -98,5 +107,14 @@ public class StudentServiceImpl implements StudentService {
         student.setProfilePictureURL(savedImages);
         studentRepository.save(student);
         return student;
+    }
+    @Override
+    public List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new NoSuchElementException("Student not found!!"));
+
+        return eventRepository.findAllStudentEvents(student.getId(),dto).stream()
+                .map(EventDtoMapper.dtoMapper::eventToEventResponseDto)
+                .collect(Collectors.toList());
     }
 }
