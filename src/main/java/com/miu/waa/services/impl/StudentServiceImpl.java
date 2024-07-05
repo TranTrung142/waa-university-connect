@@ -102,7 +102,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     public Student uploadProfileImage(Long id, MultipartFile image) {
-        Student student = findById(id);
+        Student student = studentRepository.findById(id).get();
         String savedImages = fileStorageService.storeFile(image);
         student.setProfilePictureURL(savedImages);
         studentRepository.save(student);
