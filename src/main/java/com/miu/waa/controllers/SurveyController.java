@@ -4,6 +4,7 @@ import com.miu.waa.dto.request.*;
 import com.miu.waa.dto.response.SurveyResponseDto;
 import com.miu.waa.entities.Survey;
 import com.miu.waa.entities.SurveyStatus;
+import com.miu.waa.mapper.UserDtoMapper;
 import com.miu.waa.services.SurveyService;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class SurveyController {
 
     // Helper method to map SurveyRequestDTO to Survey entity
     private Survey mapRequestDtoToEntity(SurveyRequestDto requestDto) {
-       return new Survey(requestDto.getTitle(), requestDto.getDescription(),SurveyStatus.ACTIVE,userService.getUserById(requestDto.getCreatorId()));
+       return new Survey(requestDto.getTitle(), requestDto.getDescription(),SurveyStatus.ACTIVE, UserDtoMapper.dtoMapper.toUser(userService.getUserById(requestDto.getCreatorId())));
     }
 
     // Helper method to map Survey entity to SurveyResponseDTO

@@ -1,6 +1,7 @@
 package com.miu.waa.services;
 
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
+import com.miu.waa.dto.UserDto;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,8 @@ import java.util.Optional;
 
 @Service
 public interface UserService {
-    List<User> getAll();
-    User getUserById(Long id);
+    List<UserDto> getAll();
+    UserDto getUserById(Long id);
     User findUserByEmail(String email);
     Optional<User> createUser(User u);
     Optional<User> updateUser(Long id, User user);

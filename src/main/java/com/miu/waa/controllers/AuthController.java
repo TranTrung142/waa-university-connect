@@ -5,6 +5,7 @@ import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.dto.request.LoginRequest;
 import com.miu.waa.dto.response.LoginResponse;
 import com.miu.waa.entities.User;
+import com.miu.waa.entities.UserStatus;
 import com.miu.waa.services.JwtService;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class AuthController {
         try {
             User userLogin = userService.findUserByEmail(loginRequest.getEmail());
 
-            if (userLogin == null) {
+            if (userLogin == null || !userLogin.getStatus().equals(UserStatus.ACTIVATED)) {
                 return ResponseEntity.status(401).body(new ErrorResponse(401,"Invalid account!", null));
             }
 
