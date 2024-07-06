@@ -51,3 +51,5 @@
 
 * Plagiarism is a very serious thing in all American academic institutions and is guarded against vigilantly by every professor.
  
+#### Records
+* [Thi Ngoc My Truong](https://drive.google.com/file/d/1zBvBRdB59MWCH23Hf1HULqp4gutvAl00/view?usp=sharing)

@@ -54,6 +54,10 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new NoSuchElementException("User not found")));
         post.setThread(threadRepository.findById(postCreateDto.getThreadId())
                 .orElseThrow(() -> new NoSuchElementException("Thread not found")));
+        if (postCreateDto.getParentPostId() != null) {
+            post.setParentPost(postRepository.findById(postCreateDto.getParentPostId())
+                    .orElseThrow(() -> new NoSuchElementException("Parent post not found")));
+        }
         post = postRepository.save(post);
         return PostDtoMapper.dtoMapper.postToPostResponseDto(post);
     }
