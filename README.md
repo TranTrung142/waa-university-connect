@@ -55,10 +55,10 @@
 
 
 
-Sanjukta Sunar
-https://drive.google.com/file/d/1e7huea4fItKjeJwekY-1bhz485TFD32s/view
-
  
-#### Records
+#### Records Team 2
 * [Thi Ngoc My Truong](https://drive.google.com/file/d/1zBvBRdB59MWCH23Hf1HULqp4gutvAl00/view?usp=sharing)
+* [Sanjukta Sunar](https://drive.google.com/file/d/1e7huea4fItKjeJwekY-1bhz485TFD32s/view)
+* [Dinh Trung Tran](https://drive.google.com/file/d/1RQcHnwkwo1-lPda7qePNPQNHKnZFoFgu/view?usp=sharing)
+* Quoc Hung Hoang
 
