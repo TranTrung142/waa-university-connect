@@ -2,6 +2,7 @@ package com.miu.waa.controllers;
 
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
+import com.miu.waa.dto.UserDto;
 import com.miu.waa.entities.User;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
-            User user = userService.getUserById(id);
+            UserDto user = userService.getUserById(id);
             if (user == null) {
                 return ResponseEntity.status(404)
                         .body(new ErrorResponse(404, "User not found", null));
@@ -61,7 +62,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDto) {
         try {
-            User foundUser = userService.getUserById(id);
+            UserDto foundUser = userService.getUserById(id);
             if (foundUser == null) {
                 return ResponseEntity.status(404)
                         .body(new ErrorResponse(404, "User not found", null));
@@ -82,7 +83,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            User foundUser = userService.getUserById(id);
+            UserDto foundUser = userService.getUserById(id);
             if (foundUser == null) {
                 return ResponseEntity.status(404)
                         .body(new ErrorResponse(404, "User not found", null));

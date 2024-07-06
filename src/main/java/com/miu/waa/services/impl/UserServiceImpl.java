@@ -1,7 +1,9 @@
 package com.miu.waa.services.impl;
 
+import com.miu.waa.dto.UserDto;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
+import com.miu.waa.mapper.UserDtoMapper;
 import com.miu.waa.repositories.UserRepository;
 import com.miu.waa.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +20,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<UserDto> getAll() {
+        return userRepository.findAll().stream().map(user -> UserDtoMapper.dtoMapper.toUserDto(user)).toList();
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserDto getUserById(Long id) {
+        return userRepository.findById(id).map(user -> UserDtoMapper.dtoMapper.toUserDto(user)).orElse(null);
     }
 
     public User findUserByEmail(String email) {

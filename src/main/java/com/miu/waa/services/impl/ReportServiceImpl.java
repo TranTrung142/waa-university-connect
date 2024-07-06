@@ -5,6 +5,7 @@ import com.miu.waa.entities.Report;
 import com.miu.waa.entities.ReportStatus;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
+import com.miu.waa.mapper.UserDtoMapper;
 import com.miu.waa.repositories.ReportRepository;
 import com.miu.waa.services.ReportService;
 import com.miu.waa.services.UserService;
@@ -24,13 +25,13 @@ public class ReportServiceImpl implements ReportService {
     public Report createReport(ReportDto reportDto, Long userId) {
         Report report = new Report();
         report.setReportReason(reportDto.getReportReason());
-        report.setReporter(userService.getUserById(userId));
-        report.setReportedUser(userService.getUserById(reportDto.getReportedUserId()));
+        report.setReporter(UserDtoMapper.dtoMapper.toUser(userService.getUserById(userId)));
+        report.setReportedUser(UserDtoMapper.dtoMapper.toUser(userService.getUserById(reportDto.getReportedUserId())));
         return reportRepository.save(report);
     }
 
-    public List<Report> getReports() {
-        return reportRepository.findAll();
+    public List<Report> getReportsByUserId(Long userId) {
+        return reportRepository.findAllByReporterId(userId);
     }
 
     public Optional<Report> getReportById(Long id) {

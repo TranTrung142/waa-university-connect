@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ReportService {
     public Report createReport(ReportDto reportDto, Long userId);
-    public List<Report> getReports();
+    public List<Report> getReportsByUserId(Long userId);
     public Optional<Report> getReportById(Long id);
     public void deleteReport(Long id);
     public List<Report> searchReports(ReportStatus status);
