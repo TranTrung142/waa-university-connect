@@ -3,9 +3,12 @@ package com.miu.waa.controllers;
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.entities.ReportStatus;
+import com.miu.waa.dto.request.EventFilterDto;
+import com.miu.waa.entities.EventStatus;
 import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
 import com.miu.waa.services.ReportService;
+import com.miu.waa.services.EventService;
 import com.miu.waa.services.UserService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
+    private final EventService eventService;
     private final ReportService reportService;
 
     @GetMapping("/students")
@@ -29,7 +33,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/student/approve/{id}")
+    @PutMapping("/student/approve/{id}")
     public ResponseEntity<?> approveStudent(@PathVariable Long id) {
         try {
             User user = userService.updateStatusUser(id, UserStatus.ACTIVATED).orElse(null);
@@ -44,7 +48,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/student/deactivate/{id}")
+    @PutMapping("/student/deactivate/{id}")
     public ResponseEntity<?> deactivateStudent(@PathVariable Long id) {
         try {
             User user = userService.updateStatusUser(id, UserStatus.DEACTIVATE).orElse(null);
@@ -56,6 +60,30 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, "Internal server error", null));
+        }
+    }
+    @GetMapping("/events")
+    public ResponseEntity<?> getAllEvent(@RequestParam(required = false) EventFilterDto filterDto) {
+        try {
+            if (filterDto == null) {
+                filterDto = new EventFilterDto();
+                filterDto.setStatus(null); // or set a default value
+                filterDto.setDate(null);   // or set a default value
+            }
+            return ResponseEntity.ok(new SuccessResponse(eventService.findAll(filterDto)));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
+    @PutMapping("/events/{id}/approve")
+    public ResponseEntity<?> approveEvent(@PathVariable Long id) {
+        try {
+            eventService.publishEvent(id);
+            return ResponseEntity.ok(new SuccessResponse("Event approved successfully!!!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
         }
     }
 
