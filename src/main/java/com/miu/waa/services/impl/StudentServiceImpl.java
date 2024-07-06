@@ -126,7 +126,7 @@ public class StudentServiceImpl implements StudentService {
     }
     @Override
     public List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto) {
-        Student student = studentRepository.findById(studentId)
+        Student student = studentRepository.findByStudentId(studentId)
                 .orElseThrow(() -> new NoSuchElementException("Student not found!!"));
 
         return eventRepository.findAllStudentEvents(student.getId(),dto).stream()
