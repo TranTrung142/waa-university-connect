@@ -25,6 +25,7 @@ public class SecurityConfig {
                         //TODO: Add more endpoints
                         .requestMatchers("/api/v1/health/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/register/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasAnyRole(UserRole.ADMIN.name())
                         .requestMatchers("/api/v1/admin/**").hasAnyRole(UserRole.ADMIN.name())
                         .requestMatchers("/api/v1/students/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.STUDENT.name())

@@ -16,6 +16,7 @@ import com.miu.waa.services.FileStorageService;
 import com.miu.waa.services.StudentService;
 import com.miu.waa.utils.RequestUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,8 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final EventRepository eventRepository;
     private final FileStorageService fileStorageService;
+    @Value("${spring.security.default.password}")
+    private String defaultPassword;
   
     @Override
     public List<StudentResponseDto> findAll() {
@@ -62,11 +65,21 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public StudentResponseDto findByStudentId(Long studentId) {
+        Student student=studentRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new NoSuchElementException("Student not found"));
+        return StudentDtoMapper.dtoMapper.studentToStudentResponseDto(student);
+    }
+
+    @Override
     public StudentResponseDto createStudent(StudentCreateDto dto) {
         try{
             Student student=StudentDtoMapper.dtoMapper.studentCreateDtoToStudent(dto);
             student.setStudentId(studentRepository.generateStudentId());
             student.setCreatedAt(LocalDateTime.now());
+            student.setStatus(UserStatus.PENDING);
+            student.setRole(UserRole.STUDENT);
+            student.setPassword(defaultPassword);
             student = studentRepository.save(student);
             return StudentDtoMapper.dtoMapper.studentToStudentResponseDto(student);
         }
@@ -78,16 +91,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentResponseDto updateStudent(Long studentId,StudentCreateDto studentDto) {
         try{
-            Optional<Student> optionalStudent=studentRepository.findByStudentId(studentId);
-            if(optionalStudent.isEmpty()){
-                throw new NoSuchElementException("Student not found!!");
+            Student student=studentRepository.findByStudentId(studentId)
+                    .orElseThrow(() -> new NoSuchElementException("Student not found"));
+//            if (!user.getRole().equals(UserRole.ADMIN) && !student.getId().equals(user.getId())) {
+//                throw new NoSuchElementException("You do not have permission to update this student.");
+//            }
+            if(!student.getStatus().equals(UserStatus.PENDING)){
+                throw new NoSuchElementException("You cannot modify data from here,contact admin or login student portal");
             }
-            Student student=optionalStudent.get();
+
             student.setFirstName(studentDto.getFirstName());
             student.setLastName(studentDto.getLastName());
             student.setEmail(studentDto.getEmail());
             student.setPhone(studentDto.getPhone());
-            student.setDateOfBirth(studentDto.getDateOfBirth());
             student.setProfilePictureURL(studentDto.getProfilePictureURL());
             student.setMajor(studentDto.getMajor());
             student.setAcademicAchievements(studentDto.getAcademicAchievements());
@@ -110,7 +126,7 @@ public class StudentServiceImpl implements StudentService {
     }
     @Override
     public List<EventResponseDto> findAllStudentEvents(Long studentId,EventFilterDto dto) {
-        Student student = studentRepository.findById(studentId)
+        Student student = studentRepository.findByStudentId(studentId)
                 .orElseThrow(() -> new NoSuchElementException("Student not found!!"));
 
         return eventRepository.findAllStudentEvents(student.getId(),dto).stream()

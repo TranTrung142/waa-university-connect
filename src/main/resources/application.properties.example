@@ -26,5 +26,6 @@ application.security.jwt.refresh-token.expiration=864000
 #Security
 spring.security.user.name=admin
 spring.security.user.password=password
+spring.security.default.password=$2a$10$HSrAFobkKLGSiYE4rQ9AR.aIwRFcbsUNo93Huy41htfzbTRwkYaqO
 
 file.upload-dir=uploads/
