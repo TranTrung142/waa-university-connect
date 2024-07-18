@@ -22,4 +22,5 @@ public interface EventService {
     List<UpcomingEventResponseDto> findAllUpcomingPublishedEvent();
     void joinEvent(Long eventId);
     List<EventAttandenceResponseDto> findEventAttendance(Long eventId);
+    List<EventResponseDto> findAllEventsByUserId(Long userId,EventFilterDto filterDto);
 }

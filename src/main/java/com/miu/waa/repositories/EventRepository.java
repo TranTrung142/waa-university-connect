@@ -26,4 +26,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "(:#{#filterDto.date} is null or DATE(e.eventDateTime) = :#{#filterDto.date}) "
     )
     List<Event> findAllEvents(EventFilterDto filterDto);
+
+    @Query("select e from Event e " +
+            "where e.createdBy.id=:userId and " +
+            "((:#{#filterDto.status} is null or e.status = :#{#filterDto.status}) and" +
+            "(:#{#filterDto.date} is null or DATE(e.eventDateTime) = :#{#filterDto.date})) "
+    )
+    List<Event> findAllEventsByUserId(Long userId,EventFilterDto filterDto);
 }

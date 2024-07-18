@@ -17,6 +17,9 @@ public interface EventDtoMapper {
 
     @Mapping(target = "createdBy", ignore = true)
     Event eventCreateDtoToEvent(EventCreateDto eventCreateDto);
+
+    @Mapping(target = "createByFullName", ignore = true)
+    @Mapping(target = "publishedByFullName", ignore = true)
     EventResponseDto eventToEventResponseDto(Event event);
     UpcomingEventResponseDto eventToUpcomingEventResponseDto(Event event);
     EventAttandenceResponseDto eventAttandenceToResponseDto(EventAttendance eventAttendance);

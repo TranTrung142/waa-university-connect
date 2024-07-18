@@ -221,4 +221,21 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<EventResponseDto> findAllEventsByUserId(Long userId, EventFilterDto filterDto) {
+        List<Event> events = eventRepository.findAllEventsByUserId(userId,filterDto);
+        List<EventResponseDto> responseDtos = events.stream()
+                .map(a->{
+                    EventResponseDto responseDto = EventDtoMapper.dtoMapper.eventToEventResponseDto(a);
+                    User publishedByUser=a.getCreatedBy();
+                    if(publishedByUser!=null){
+                        responseDto.setPublishedByFullName(publishedByUser.getFirstName() + " " +publishedByUser.getLastName());
+                    }
+                    return responseDto;
+                })
+                .collect(Collectors.toList());
+
+        return responseDtos;
+    }
+
 }

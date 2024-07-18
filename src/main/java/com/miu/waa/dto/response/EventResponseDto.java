@@ -19,5 +19,7 @@ public class EventResponseDto {
     private LocalDateTime eventDateTime;
     private EventStatus status;
     private LocalDateTime createdOn;
+    private String createByFullName;
     private LocalDateTime publishedOn;
+    private String publishedByFullName;
 }
