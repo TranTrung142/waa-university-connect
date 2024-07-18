@@ -21,7 +21,6 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String phone;
-    private LocalDate dateOfBirth;
     private String profilePictureURL;
     private UserRole role;
     private UserStatus status;

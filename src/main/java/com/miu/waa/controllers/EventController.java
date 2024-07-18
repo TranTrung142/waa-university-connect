@@ -3,6 +3,7 @@ package com.miu.waa.controllers;
 import com.miu.waa.dto.ErrorResponse;
 import com.miu.waa.dto.SuccessResponse;
 import com.miu.waa.dto.request.EventCreateDto;
+import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Event;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
@@ -77,7 +78,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> changeStatus(@PathVariable Long id,@RequestParam  EventStatus status) {
+    public ResponseEntity<?> changeStatus(@PathVariable Long id,@RequestBody  EventStatus status) {
         try {
             eventService.updateStatus(id, status);
             return ResponseEntity.ok(new SuccessResponse("Status updated successfully!!!"));
@@ -91,6 +92,13 @@ public class EventController {
         List<UpcomingEventResponseDto> result=eventService.findAllUpcomingPublishedEvent();
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/running-events")
+    public ResponseEntity<?> getAllRunningEvents() {
+        List<UpcomingEventResponseDto> result=eventService.findAllRunningEvent();
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/{eventId}/join-event")
     public ResponseEntity<?> joinEvent(@PathVariable Long eventId) {
         try {
@@ -106,6 +114,24 @@ public class EventController {
     public ResponseEntity<?> getAttandence(@PathVariable Long eventId) {
         try {
             return ResponseEntity.ok(eventService.findEventAttendance(eventId));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ErrorResponse(500, e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getCurrentUserEvent(/*@RequestParam(required = false) EventFilterDto filterDto*/){
+        try {
+            EventFilterDto filterDto=null;
+            if (filterDto == null) {
+                filterDto = new EventFilterDto();
+                filterDto.setStatus(null); // or set a default value
+                filterDto.setDate(null);   // or set a default value
+            }
+            Long userId=RequestUtil.getUserLogin(null).get().getId();
+            List<EventResponseDto> eventResponseDtos = eventService.findAllEventsByUserId(userId,filterDto);
+            return ResponseEntity.ok(new SuccessResponse(eventResponseDtos));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ErrorResponse(500, e.getMessage(), null));

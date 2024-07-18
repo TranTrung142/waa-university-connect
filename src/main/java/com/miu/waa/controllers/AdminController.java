@@ -9,12 +9,17 @@ import com.miu.waa.entities.User;
 import com.miu.waa.entities.UserStatus;
 import com.miu.waa.services.ReportService;
 import com.miu.waa.services.EventService;
+import com.miu.waa.services.StudentService;
 import com.miu.waa.services.UserService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
@@ -63,13 +68,32 @@ public class AdminController {
         }
     }
     @GetMapping("/events")
-    public ResponseEntity<?> getAllEvent(@RequestParam(required = false) EventFilterDto filterDto) {
+//    public ResponseEntity<?> getAllEvent(@RequestParam(required = false) EventFilterDto filterDto) {
+    public ResponseEntity<?> getAllEvent(@RequestParam(required = false) String status,
+                                         @RequestParam(required = false) String date) {
         try {
-            if (filterDto == null) {
-                filterDto = new EventFilterDto();
-                filterDto.setStatus(null); // or set a default value
-                filterDto.setDate(null);   // or set a default value
+            EventFilterDto filterDto = new EventFilterDto();
+            if (status != null) {
+                try {
+                    filterDto.setStatus(EventStatus.valueOf(status));
+                } catch (IllegalArgumentException e) {
+                    // Handle the case where the status string does not match any enum value
+                    filterDto.setStatus(null); // or set a default value
+                }
             }
+            if (date != null) {
+                try {
+                    filterDto.setDate(LocalDate.parse(date));
+                } catch (DateTimeParseException e) {
+                    // Handle the case where the date string is not a valid date format
+                    filterDto.setDate(null); // or set a default value
+                }
+            }
+//            if (filterDto == null) {
+//                filterDto = new EventFilterDto();
+//                filterDto.setStatus(null); // or set a default value
+//                filterDto.setDate(null);   // or set a default value
+//            }
             return ResponseEntity.ok(new SuccessResponse(eventService.findAll(filterDto)));
         } catch (Exception e) {
             return ResponseEntity.status(500)

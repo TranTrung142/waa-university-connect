@@ -1,5 +1,6 @@
 package com.miu.waa.dto.response;
 
+import com.miu.waa.dto.UserDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,4 +18,6 @@ public class UpcomingEventResponseDto {
     private String description;
 
     private LocalDateTime eventDateTime;
+
+    private UserDto createdBy;
 }
