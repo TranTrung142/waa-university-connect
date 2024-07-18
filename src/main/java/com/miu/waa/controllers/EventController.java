@@ -78,7 +78,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> changeStatus(@PathVariable Long id,@RequestParam  EventStatus status) {
+    public ResponseEntity<?> changeStatus(@PathVariable Long id,@RequestBody  EventStatus status) {
         try {
             eventService.updateStatus(id, status);
             return ResponseEntity.ok(new SuccessResponse("Status updated successfully!!!"));
@@ -92,6 +92,13 @@ public class EventController {
         List<UpcomingEventResponseDto> result=eventService.findAllUpcomingPublishedEvent();
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/running-events")
+    public ResponseEntity<?> getAllRunningEvents() {
+        List<UpcomingEventResponseDto> result=eventService.findAllRunningEvent();
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/{eventId}/join-event")
     public ResponseEntity<?> joinEvent(@PathVariable Long eventId) {
         try {

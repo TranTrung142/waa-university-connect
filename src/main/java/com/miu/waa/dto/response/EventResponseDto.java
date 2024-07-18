@@ -1,5 +1,6 @@
 package com.miu.waa.dto.response;
 
+import com.miu.waa.dto.UserDto;
 import com.miu.waa.entities.EventStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class EventResponseDto {
     private LocalDateTime eventDateTime;
     private EventStatus status;
     private LocalDateTime createdOn;
-    private String createByFullName;
     private LocalDateTime publishedOn;
-    private String publishedByFullName;
+    private UserDto createdBy;
+    private UserDto approvedBy;
 }

@@ -3,6 +3,7 @@ package com.miu.waa.services.impl;
 import com.miu.waa.dto.request.EventCreateDto;
 import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventAttandenceResponseDto;
+import com.miu.waa.dto.response.EventAttendedUserDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.*;
@@ -136,12 +137,20 @@ public class EventServiceImpl implements EventService {
                 throw new NoSuchElementException("You do not have permission to access this event.");
             }
 
-            if(eventStatus==EventStatus.DRAFT || eventStatus==EventStatus.PUBLISHED ||
-                (eventStatus==EventStatus.CLOSED && event.getStatus()!=EventStatus.STARTED) ||
-                (eventStatus!=EventStatus.PUBLISHED && event.getStatus()!=EventStatus.PUBLISHED)
-            ){
+            if(eventStatus==EventStatus.DRAFT)
+            {
                 throw new Exception("Event status can not be updated!!!");
             }
+            else if(eventStatus==EventStatus.PUBLISHED && event.getStatus()!=EventStatus.DRAFT){
+                throw new Exception("Event can not be published!!!");
+            }
+            else if((eventStatus==EventStatus.STARTED && event.getStatus()!=EventStatus.PUBLISHED)){
+                throw new Exception("Event can not be started!!!");
+            }
+            else if((eventStatus==EventStatus.CLOSED && event.getStatus()!=EventStatus.STARTED)){
+                throw new Exception("Event can not be closed!!!");
+            }
+
             event.setStatus(eventStatus);
             event=eventRepository.save(event);
             return EventDtoMapper.dtoMapper.eventToEventResponseDto(event);
@@ -180,6 +189,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<UpcomingEventResponseDto> findAllRunningEvent() {
+        List<Event> publishedEvent=eventRepository.findAllRunningEvent();
+        return publishedEvent.stream()
+                .map(EventDtoMapper.dtoMapper::eventToUpcomingEventResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void joinEvent(Long eventId) {
         Event event=eventRepository.findById(eventId)
                 .orElseThrow(()->new NoSuchElementException("Event not found!!!"));
@@ -188,9 +205,9 @@ public class EventServiceImpl implements EventService {
         if(event.getStatus()!= EventStatus.STARTED){
             sb.append("Event has not started by host");
         }
-        else if(event.getEventDateTime().isAfter(LocalDateTime.now())){
-            sb.append("you cannot join this event");
-        }
+//        else if(event.getEventDateTime().isAfter(LocalDateTime.now())){
+//            sb.append("you cannot join this event");
+//        }
         if(!sb.isEmpty())
             throw new NoSuchElementException(sb.toString());
 
@@ -205,7 +222,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventAttandenceResponseDto> findEventAttendance(Long eventId) {
+    public List<EventAttendedUserDto> findEventAttendance(Long eventId) {
         Event event=eventRepository.findById(eventId)
                 .orElseThrow(()->new NoSuchElementException("Event not found!!!"));
         User user= RequestUtil.getUserLogin(null)
@@ -215,9 +232,9 @@ public class EventServiceImpl implements EventService {
             throw new NoSuchElementException("You do not have permission to access this operation.");
         }
 
-        List<EventAttendance> attendance=eventAttendanceRepository.findEventAttendanceByEventId(eventId);
+        List<User> attendance=eventAttendanceRepository.findEventAttendanceByEventId(eventId);
         return attendance.stream()
-                .map(EventDtoMapper.dtoMapper::eventAttandenceToResponseDto)
+                .map(EventDtoMapper.dtoMapper::userToEventAttendedUserDto)
                 .collect(Collectors.toList());
     }
 
@@ -227,10 +244,6 @@ public class EventServiceImpl implements EventService {
         List<EventResponseDto> responseDtos = events.stream()
                 .map(a->{
                     EventResponseDto responseDto = EventDtoMapper.dtoMapper.eventToEventResponseDto(a);
-                    User publishedByUser=a.getCreatedBy();
-                    if(publishedByUser!=null){
-                        responseDto.setPublishedByFullName(publishedByUser.getFirstName() + " " +publishedByUser.getLastName());
-                    }
                     return responseDto;
                 })
                 .collect(Collectors.toList());

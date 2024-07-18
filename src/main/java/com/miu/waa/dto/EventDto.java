@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UserDto {
-    private String firstName;
-    private String lastName;
+public class EventDto {
+    private Long id;
+    private String title;
 }

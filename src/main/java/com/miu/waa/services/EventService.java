@@ -3,6 +3,7 @@ package com.miu.waa.services;
 import com.miu.waa.dto.request.EventCreateDto;
 import com.miu.waa.dto.request.EventFilterDto;
 import com.miu.waa.dto.response.EventAttandenceResponseDto;
+import com.miu.waa.dto.response.EventAttendedUserDto;
 import com.miu.waa.dto.response.EventResponseDto;
 import com.miu.waa.dto.response.UpcomingEventResponseDto;
 import com.miu.waa.entities.Event;
@@ -20,7 +21,8 @@ public interface EventService {
     EventResponseDto updateStatus(Long eventId, EventStatus eventStatus) throws Exception;
     EventResponseDto delete(Long eventId) throws Exception;
     List<UpcomingEventResponseDto> findAllUpcomingPublishedEvent();
+    List<UpcomingEventResponseDto> findAllRunningEvent();
     void joinEvent(Long eventId);
-    List<EventAttandenceResponseDto> findEventAttendance(Long eventId);
+    List<EventAttendedUserDto> findEventAttendance(Long eventId);
     List<EventResponseDto> findAllEventsByUserId(Long userId,EventFilterDto filterDto);
 }
